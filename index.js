@@ -7,7 +7,14 @@ dotenv.config({
     path: './env'
 })
 
-connectDB();
+connectDB()
+    .then((res) => {
+        console.log("Database connected succefully !!!");
+
+    })
+    .catch((err) => {
+        console.log(`Database connection is failed : ${err}`);
+    })
 
 
 
