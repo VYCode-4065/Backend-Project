@@ -8,6 +8,8 @@ const connectDB = async () => {
         const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`);
 
         console.log(`\n MongoDB connected !! DB HOST :${connectionInstance.connection.host}`);
+        console.log(`Server listing at http://localhost:${process.env.PORT}`);
+
 
 
     } catch (error) {
