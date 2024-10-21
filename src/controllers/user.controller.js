@@ -18,8 +18,6 @@ const registerUser = asynchandler(async (req, res) => {
 
     // destructuring req.body values
     const { fullName, email, username, password } = req.body;
-    console.log("fullname :", fullName, "email :", email);
-
 
     // check that any field is not empty
     if (
@@ -29,7 +27,7 @@ const registerUser = asynchandler(async (req, res) => {
     }
 
     // check if entered user is already exists
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
 
@@ -40,16 +38,23 @@ const registerUser = asynchandler(async (req, res) => {
 
     // accessing path of avatar and cover image
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+    let coverImageLocalPath;
+    if (req.files.coverImage && req.files.coverImage > 0) {
+        coverImageLocalPath = req.files.coverImage[0]?.path;
+    }
 
     // check if avatar image path does not exit throw an error
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required ");
     }
 
+
     // uploading avatar and cover image on cloudinary 
-    avatar = await uploadOnCloudinary(avatarLocalPath);
-    coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    let avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    let coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
     // check if avatar does'nt uploaded on cloudinary throw error
     if (!avatar) {
@@ -73,7 +78,7 @@ const registerUser = asynchandler(async (req, res) => {
     )
 
     // sending response to client 
-    return res.status(2001).json(
+    return res.status(201).json(
         new ApiResponse(201, createdUser, "User registered successfully !")
     )
 })
