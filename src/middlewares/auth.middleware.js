@@ -1,6 +1,6 @@
-import { User } from "../models/user.model";
-import { ApiError } from "../utils/ApiErrors";
-import { asynchandler } from "../utils/asynchandler";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiErrors.js";
+import { asynchandler } from "../utils/asynchandler.js";
 import jwt from "jsonwebtoken";
 
 export const verifyJWT = asynchandler(async (req, _, next) => {
@@ -12,6 +12,9 @@ export const verifyJWT = asynchandler(async (req, _, next) => {
         }
 
         const decodeToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+        console.log("Authorized ", decodeToken);
+
         const user = await User.findById(decodeToken?._id).select("-password -refreshToken")
 
         // Todo discuss about frontend
